@@ -1,6 +1,7 @@
 package models;
 
 import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.fakeGlobal;
 import static play.test.Helpers.inMemoryDatabase;
 import static org.junit.Assert.*;
 
@@ -18,7 +19,8 @@ public class ModelsTest extends WithApplication {
 
 	@Before
 	public void setUp() {
-		start(fakeApplication(inMemoryDatabase()));
+		start(fakeApplication(inMemoryDatabase(), fakeGlobal()));
+		Ebean.save((List) Yaml.load("test-data.yml"));
 	}
 
 	@Test
@@ -75,7 +77,7 @@ public class ModelsTest extends WithApplication {
 
 	@Test
 	public void fullTest() {
-		Ebean.save((List) Yaml.load("test-data.yml"));
+		
 
 		// Count things
 		assertEquals(3, User.find.findRowCount());
