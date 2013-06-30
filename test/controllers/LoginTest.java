@@ -40,4 +40,23 @@ public class LoginTest extends WithApplication {
 	    assertEquals(400, status(result));
 	    assertNull(session(result).get("email"));
 	}
+	
+	@Test
+	public void authenticated() {
+	    Result result = callAction(
+	        controllers.routes.ref.Application.index(),
+	        fakeRequest().withSession("email", "bob@example.com")
+	    );
+	    assertEquals(200, status(result));
+	}
+	
+	@Test
+	public void notAuthenticated() {
+	    Result result = callAction(
+	        controllers.routes.ref.Application.index(),
+	        fakeRequest()
+	    );
+	    assertEquals(303, status(result));
+	    assertEquals("/login", header("Location", result));
+	}
 }

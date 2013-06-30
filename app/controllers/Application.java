@@ -8,17 +8,31 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 import views.html.login;
+import play.mvc.*;
 
 
 public class Application extends Controller {
 
+	@Security.Authenticated(Secured.class)
 	public static Result index() {
-		return ok(index.render(Project.find.all(), Task.find.all()));
+		 return ok(index.render(
+			        Project.findInvolving(request().username()), 
+			        Task.findTodoInvolving(request().username()),
+			        User.find.byId(request().username())
+			    ));
 	}
 
 	public static Result login() {
         return ok(login.render(Form.form(Login.class))
         );
+	}
+	
+	public static Result logout() {
+	    session().clear();
+	    flash("success", "You've been logged out");
+	    return redirect(
+	        routes.Application.login()
+	    );
 	}
 	
 	public static Result authenticate() {
